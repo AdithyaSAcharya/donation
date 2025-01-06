@@ -15,7 +15,9 @@ const Header = () => {
       <header className="bg-slate-800 text-slate-100 shadow-lg fixed top-0 left-0 w-full z-10">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           {/* Logo */}
-          <h1 className="text-2xl font-bold tracking-wider">Donation App</h1>
+          <Link href="/">
+            <h1 className="text-2xl font-bold tracking-wider">Donation App</h1>
+          </Link>
 
           {/* Hamburger Menu for Mobile */}
           <button

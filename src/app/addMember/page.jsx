@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { FiUser, FiPhone } from "react-icons/fi";
 import { FaRupeeSign } from "react-icons/fa";
+import Loader from "../component/Loader";
 
 
 const AddMemberPage = () => {

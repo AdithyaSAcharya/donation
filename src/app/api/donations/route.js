@@ -17,33 +17,57 @@ export async function POST(req) {
     }
 
     const databaseId = process.env.DATABASE_ID;
-    const collectionId = process.env.DONATION_COLLECTION_ID;
+    const donationCollectionId = process.env.DONATION_COLLECTION_ID;
+    const memberCollectionId = process.env.MEMBERS_COLLECTION_ID;
 
-    const donationPromises = donations.map((donation) => {
+    const donationPromises = donations.map(async (donation) => {
       const documentId = "unique()";
       const { memberId, member, amount } = donation;
 
-      return databases.createDocument(
+      // Create the donation document
+      await databases.createDocument(
         databaseId,
-        collectionId,
+        donationCollectionId,
         documentId,
         {
-          member_id: memberId, // Use memberId instead of member name
-          amount: amount,
-          name: member, // If you need to store the name as well
+          member_id: memberId,
+          amount,
+          name: member,
         }
       );
+
+      // Fetch the member document to get the current total_contributions
+      const memberDocument = await databases.getDocument(
+        databaseId,
+        memberCollectionId,
+        memberId
+      );
+
+
+      const currentTotal = memberDocument.total_contributions || 0;
+
+      // Update the total_contributions for the member
+      await databases.updateDocument(
+        databaseId,
+        memberCollectionId,
+        memberId,
+        {
+          total_contributions: currentTotal + amount,
+        }
+      );
+
     });
 
-    // Await all the promises to be resolved (i.e., insert all donations)
+
+    // Await all the promises to be resolved
     await Promise.all(donationPromises);
 
     return NextResponse.json({
       success: true,
-      message: "Donations submitted successfully",
+      message: "Donations submitted successfully, and total contributions updated.",
     });
   } catch (error) {
-    console.error("Error submitting donations:", error);
+    console.error("Error submitting donations and updating contributions:", error);
 
     return NextResponse.json(
       {
@@ -55,6 +79,7 @@ export async function POST(req) {
     );
   }
 }
+
 
 export async function GET() {
   try {

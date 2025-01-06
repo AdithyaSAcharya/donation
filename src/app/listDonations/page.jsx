@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import Loader from "../component/Loader";
 
 const Page = () => {
   const [donationsData, setDonationsData] = useState({});
@@ -39,7 +40,7 @@ const Page = () => {
         Daily Donation Listing
       </h1>
 
-      {loading && <p className="text-center text-slate-700">Loading...</p>}
+      {loading && <div className="text-center text-slate-700 flex justify-center items-center"><Loader /></div>}
       {error && <p className="text-center text-red-500">{error}</p>}
       {!loading && !error && Object.keys(donationsData).length === 0 && (
         <p className="text-center text-slate-700">No donations available.</p>

@@ -1,10 +1,11 @@
-import Image from "next/image";
+import Home from "@/app/component/SummaryPage"
 
-export default function Home() {
+const page = () => {
   return (
-    <div className="">
-      Jai ganesh 
-      Jai shree ram setha maa
+    <div>
+      <Home/>
     </div>
-  );
+  )
 }
+
+export default page
