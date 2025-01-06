@@ -109,7 +109,7 @@ const Header = () => {
           </li>
           <li>
             <Link
-              href="/addDonations"
+              href="/addDonation"
               className="flex items-center space-x-2 hover:text-slate-300 transition duration-300"
               onClick={() => setIsMenuOpen(false)}
             >
@@ -119,7 +119,7 @@ const Header = () => {
           </li>
           <li>
             <Link
-              href="/list-donations"
+              href="/listDonations"
               className="flex items-center space-x-2 hover:text-slate-300 transition duration-300"
               onClick={() => setIsMenuOpen(false)}
             >

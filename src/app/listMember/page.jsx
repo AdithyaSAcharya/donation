@@ -1,48 +1,86 @@
 "use client";
-import React from "react";
-
-const members = [
-  { id: 1, name: "John Doe", phone: "9876543210" },
-  { id: 2, name: "Jane Smith", phone: "9123456789" },
-  { id: 3, name: "Michael Johnson", phone: "9345678901" },
-  { id: 4, name: "Emily Davis", phone: "9678901234" },
-  { id: 5, name: "Daniel Brown", phone: "9898765432" },
-  { id: 6, name: "Samantha Green", phone: "9051234567" },
-  { id: 7, name: "Olivia White", phone: "9234567890" },
-  { id: 8, name: "James Taylor", phone: "9445678901" },
-  ];
+import React, { useEffect, useState } from "react";
 
 const ListMembersPage = () => {
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        const response = await fetch("/api/members", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch members.");
+        }
+
+        const data = await response.json();
+        setMembers(data?.data || []); // Assuming the API response contains a `data` array
+      } catch (error) {
+        setError(error.message || "An error occurred while fetching members.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMembers();
+  }, []);
+
   return (
-    <div className="bg-slate-100 p-8">
-      <div className="w-full max-w-4xl bg-white shadow-md rounded-lg p-6 mx-auto">
-        <h1 className="text-2xl font-semibold text-slate-900 mb-6 text-center">
+    <div className="p-2 ">
+      <div className="w-full max-w-5xl bg-white shadow-lg rounded-lg p-8 mx-auto">
+        <h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center">
           List of Members
         </h1>
-        {/* Calculate the remaining height for the table */}
-        <div
-          className="overflow-x-auto"
-          style={{ minHeight: "calc(100vh - 15rem)" }} // 4rem is the margin-bottom (mb-16)
-        >
-          <table className="min-w-full table-auto">
-            <thead className="sticky top-0 bg-slate-200">
-              <tr>
-                <th className="px-4 py-2 text-sm font-medium text-slate-700">#</th>
-                <th className="px-4 py-2 text-sm font-medium text-slate-700">Name</th>
-                <th className="px-4 py-2 text-sm font-medium text-slate-700">Phone Number</th>
-              </tr>
-            </thead>
-            <tbody>
-              {members.map((member) => (
-                <tr key={member.id} className="border-b hover:bg-slate-50">
-                  <td className="px-4 py-2 text-sm text-slate-600">{member.id}</td>
-                  <td className="px-4 py-2 text-sm text-slate-600">{member.name}</td>
-                  <td className="px-4 py-2 text-sm text-slate-600">{member.phone}</td>
+
+        {loading ? (
+          <div className="flex justify-center items-center h-48">
+            <div className="w-8 h-8 border-4 border-gray-300 border-t-gray-800 rounded-full animate-spin"></div>
+            <p className="ml-4 text-gray-600">Loading members...</p>
+          </div>
+        ) : error ? (
+          <p className="text-center text-red-600">{error}</p>
+        ) : members.length === 0 ? (
+          <p className="text-center text-gray-600">No members found.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse border border-gray-200 rounded-lg shadow-md">
+              <thead className="bg-gray-800 text-white">
+                <tr>
+                  <th className="px-6 py-4 text-left text-sm font-medium">#</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium">Name</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium">Phone Number</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {members.map((member, index) => (
+                  <tr
+                    key={member.$id}
+                    className={`hover:bg-gray-100 ${
+                      index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                    }`}
+                  >
+                    <td className="px-6 py-4 text-sm text-gray-700 border-t border-gray-200">
+                      {index + 1}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-700 border-t border-gray-200">
+                      {member.name}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-700 border-t border-gray-200">
+                      {member.phoneNumber}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
