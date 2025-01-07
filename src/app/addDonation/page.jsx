@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { FaEdit } from "react-icons/fa";
 import Loader from "../component/Loader";
+import withAuth from "../component/WithAuth";
 
 const donationAmounts = [50, 100, 150, 200];
 
@@ -13,6 +14,8 @@ const AddDonationPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
   const [loadingMembers, setLoadingMembers] = useState(true);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [notification, setNotification] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -71,12 +74,13 @@ const AddDonationPage = () => {
   };
 
   const handleSubmitDonationData = async () => {
+    setLoadingSubmit(true);
     const donationData = donations.map((donation) => ({
       memberId: members.find((member) => member.name === donation.member)?.$id,
       member: donation.member,
       amount: donation.amount,
     }));
-  
+
     try {
       const response = await fetch("/api/donations", {
         method: "POST",
@@ -85,20 +89,22 @@ const AddDonationPage = () => {
         },
         body: JSON.stringify({ donations: donationData }), // Pass the donations array
       });
-  
+
       const result = await response.json();
-  
+
       if (result.success) {
-        alert("Donations submitted successfully");
+        setNotification({ type: "success", message: "Donations submitted successfully!" });
+        setDonations([]); // Clear the donations list on success
       } else {
-        alert(result.message || "Failed to submit donations");
+        setNotification({ type: "error", message: result.message || "Failed to submit donations." });
       }
     } catch (error) {
       console.error("Error submitting donations:", error);
-      alert("An error occurred while submitting donations.");
+      setNotification({ type: "error", message: "An error occurred while submitting donations." });
+    } finally {
+      setLoadingSubmit(false);
     }
   };
-  
 
   const handleEditDonation = (index) => {
     setSelectedMember(donations[index].member);
@@ -118,7 +124,7 @@ const AddDonationPage = () => {
         <div className="mb-4">
           <label className="block text-sm font-medium text-slate-700">Select Member</label>
           {loadingMembers ? (
-            <p className="text-sm text-gray-600 mt-2"><Loader /></p>
+            <div className="text-sm text-gray-600 mt-2"><Loader /></div>
           ) : error ? (
             <p className="text-sm text-red-600 mt-2">{error}</p>
           ) : (
@@ -164,6 +170,17 @@ const AddDonationPage = () => {
         </button>
       </div>
 
+      {/* Notification */}
+      {notification && (
+        <div
+          className={`mt-4 w-full max-w-lg mx-auto p-4 text-white rounded-lg ${
+            notification.type === "success" ? "bg-green-100 text-green-500"  : "bg-red-100 text-red-500"
+          }`}
+        >
+          {notification.message}
+        </div>
+      )}
+
       {/* Donation List Section */}
       {donations.length > 0 && (
         <div className="mt-6 w-full max-w-lg bg-white shadow-md rounded-lg p-6 mx-auto">
@@ -190,8 +207,9 @@ const AddDonationPage = () => {
           <button
             onClick={handleSubmitDonationData}
             className="w-full mt-4 bg-slate-600 text-white py-2 rounded-lg hover:bg-slate-700 transition duration-300"
+            disabled={loadingSubmit} // Disable button while loading
           >
-            Submit
+            {loadingSubmit ? <Loader /> : "Submit"}
           </button>
         </div>
       )}
@@ -199,5 +217,4 @@ const AddDonationPage = () => {
   );
 };
 
-export default AddDonationPage;
-
+export default withAuth(AddDonationPage);
