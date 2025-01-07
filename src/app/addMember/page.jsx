@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { FiUser, FiPhone } from "react-icons/fi";
 import { FaRupeeSign } from "react-icons/fa";
 import Loader from "../component/Loader";
+import { useRouter } from "next/navigation";
+import withAuth from "../component/WithAuth";
 
 
 const AddMemberPage = () => {
@@ -182,5 +184,5 @@ const AddMemberPage = () => {
   );
 };
 
-export default AddMemberPage;
+export default withAuth(AddMemberPage);
 

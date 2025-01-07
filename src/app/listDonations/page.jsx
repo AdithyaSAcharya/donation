@@ -41,9 +41,9 @@ const Page = () => {
       </h1>
 
       {loading && <div className="text-center text-slate-700 flex justify-center items-center"><Loader /></div>}
-      {error && <p className="text-center text-red-500">{error}</p>}
+      {error && <div className="text-center text-red-500">{error}</div>}
       {!loading && !error && Object.keys(donationsData).length === 0 && (
-        <p className="text-center text-slate-700">No donations available.</p>
+        <div className="text-center text-slate-700">No donations available.</div>
       )}
 
       {Object.entries(donationsData).map(([date, { donations }]) => (
