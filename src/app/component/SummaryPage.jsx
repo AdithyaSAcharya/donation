@@ -5,7 +5,7 @@ import Loader from "./Loader";  // Importing your Loader component
 export default function Home() {
   const [topContributors, setTopContributors] = useState([]);
   const [donationStats, setDonationStats] = useState([]);
-  const [totalDonations, setTotalDonations] = useState(0);
+  const [totalDonations, setTotalDonations] = useState();
 
   // Separate loading states for each section
   const [loadingContributors, setLoadingContributors] = useState(true);
@@ -34,7 +34,7 @@ export default function Home() {
         (acc, donationDay) => acc + donationDay.donations.reduce((sum, donation) => sum + donation.amount, 0),
         0
       );
-      setTotalDonations(total);
+      setTotalDonations(total+13050);
       setLoadingStats(false); // Set loading to false once stats are calculated
     }
 

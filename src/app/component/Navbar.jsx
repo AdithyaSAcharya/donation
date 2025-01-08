@@ -41,7 +41,7 @@ const Header = () => {
     if (username === "username" && password === "password1") {
       setIsLoggedIn(true);
       const expiry = new Date();
-      expiry.setMinutes(expiry.getMinutes() + 1);
+      expiry.setMinutes(expiry.getMinutes() + 5);
       localStorage.setItem("username", username);
       localStorage.setItem("loginExpiry", expiry.toISOString());
       setIsLoginPopupOpen(false);

@@ -81,6 +81,7 @@ export async function POST(req) {
 }
 
 
+
 export async function GET() {
   try {
     const databaseId = process.env.DATABASE_ID;
@@ -91,13 +92,11 @@ export async function GET() {
     const donations = response.documents;
 
     if (!donations || donations.length === 0) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "No donations found.",
-        },
-        { status: 404 }
-      );
+      return NextResponse.json({
+        success: true,
+        data: {}, // Return an empty object to indicate no donations
+        message: "No donations found.",
+      });
     }
 
     // Group donations by date
